@@ -12,7 +12,6 @@ interface PageViewResponse {
 
 interface Article {
   title: string;
-  url: string;
   views: number;
   rank: number;
 }
@@ -43,7 +42,6 @@ async function fetchTopArticles() {
     
     const formattedArticles: Article[] = articles.map((article, index) => ({
       title: article.article,
-      url: `https://ja.wikipedia.org/wiki/${encodeURIComponent(article.article)}`,
       views: article.views,
       rank: index + 1
     }));

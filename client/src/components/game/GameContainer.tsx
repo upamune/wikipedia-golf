@@ -5,7 +5,7 @@ import { Loader2, RefreshCw } from "lucide-react";
 import { ArticleCard } from "./ArticleCard";
 import { ShareButton } from "./ShareButton";
 import { getRandomArticle, getArticleByTitle, type WikipediaArticle } from "@/lib/wikipedia";
-import { getRandomTopArticle } from "@/lib/top-articles";
+import { getRandomTopArticle, getWikipediaUrl } from "@/lib/top-articles";
 import { useLocation } from "wouter";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
@@ -28,7 +28,10 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
       }
 
       setStartArticle(start);
-      setGoalArticle(goal);
+      setGoalArticle({
+        ...goal,
+        url: getWikipediaUrl(goal.title)
+      });
       setLocation(`/game/${encodeURIComponent(start.title)}/${encodeURIComponent(goal.title)}`);
     } catch (error) {
       toast({
@@ -51,8 +54,14 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
             getArticleByTitle(goalTitle)
           ]);
           if (start && goal) {
-            setStartArticle(start);
-            setGoalArticle(goal);
+            setStartArticle({
+              ...start,
+              url: getWikipediaUrl(start.title)
+            });
+            setGoalArticle({
+              ...goal,
+              url: getWikipediaUrl(goal.title)
+            });
           } else {
             throw new Error("記事が見つかりません");
           }
