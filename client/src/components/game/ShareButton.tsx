@@ -29,8 +29,8 @@ export function ShareButton() {
     <Button
       onClick={handleShare}
       variant="outline"
-      className="gap-2 text-lg px-8 py-6"
-      size={isMobile ? "icon" : "lg"}
+      className="gap-2"
+      size={isMobile ? "icon" : "sm"}
     >
       <Share2 className="h-5 w-5" />
       {!isMobile && "お題をシェアする"}
