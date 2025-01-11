@@ -104,7 +104,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {startArticle && <ArticleCard article={startArticle} type="start" />}
-        {goalArticle && <ArticleCard hideUrl article={goalArticle} type="goal" />}
+        {goalArticle && <ArticleCard article={goalArticle} type="goal" />}
       </div>
     </div>
   );
