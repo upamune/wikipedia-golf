@@ -74,13 +74,13 @@ export async function getArticleContent(title: string): Promise<string> {
         title.startsWith('Category:') ||
         title.includes('#')
       ) {
-        return 'style="display:none"';
+        return 'class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;"';
       }
 
       // 通常のリンクはゲームのURLに変換
       const currentUrl = new URL(window.location.href);
       const [, , start, goal] = currentUrl.pathname.split('/');
-      if (!start || !goal) return 'style="display:none"';
+      if (!start || !goal) return 'class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;"';
 
       const params = new URLSearchParams(currentUrl.search);
       const currentScore = Number.parseInt(params.get('score') || '0', 10);
