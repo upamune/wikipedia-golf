@@ -197,34 +197,44 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
 
       <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center gap-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex items-center gap-2">
                 <Badge className="bg-blue-500">スタート</Badge>
-                <span className="font-medium">{startArticle?.title}</span>
+                <span className="font-medium truncate max-w-[200px]">{startArticle?.title}</span>
               </div>
               {currentArticle && currentArticle.title !== startArticle?.title && (
                 <div className="flex items-center gap-2">
                   <Badge className="bg-green-500">現在</Badge>
-                  <span className="font-medium">{currentArticle.title}</span>
+                  <span className="font-medium truncate max-w-[200px]">{currentArticle.title}</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
                 <Badge className="bg-red-500">ゴール</Badge>
-                <span className="font-medium">{goalArticle?.title}</span>
+                <span className="font-medium truncate max-w-[200px]">{goalArticle?.title}</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <span className="font-bold text-lg">スコア: {score} 手</span>
-              <Button
-                onClick={handleNewGame}
-                size="sm"
-                className="gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                新しいゲーム
-              </Button>
-              {startArticle && goalArticle && <ShareButton />}
+              <span className="font-bold text-lg whitespace-nowrap">スコア: {score} 手</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleNewGame}
+                  size="sm"
+                  className="hidden sm:flex gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  新しいゲーム
+                </Button>
+                <Button
+                  onClick={handleNewGame}
+                  size="icon"
+                  title="新しいゲーム"
+                  className="sm:hidden"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                {startArticle && goalArticle && <ShareButton />}
+              </div>
             </div>
           </div>
         </div>
