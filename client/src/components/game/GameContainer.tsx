@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Confetti } from "./Confetti";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
   const [location, setLocation] = useLocation();
@@ -21,6 +22,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
   const [loading, setLoading] = useState(true);
   const [articleContent, setArticleContent] = useState<string>("");
   const [showGoalDialog, setShowGoalDialog] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // URLからゲームの状態を取得
   const urlParams = new URLSearchParams(window.location.search);
@@ -74,6 +76,9 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
         // ゴール判定
         if (newArticle.title === goalTitle) {
           setShowGoalDialog(true);
+          setShowConfetti(true);
+          // 3秒後にConfettiを非表示にする
+          setTimeout(() => setShowConfetti(false), 3000);
         }
       }
     } catch (error) {
@@ -128,6 +133,9 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
               // 初期ロード時のゴール判定
               if (current.title === goalTitle) {
                 setShowGoalDialog(true);
+                setShowConfetti(true);
+                // 3秒後にConfettiを非表示にする
+                setTimeout(() => setShowConfetti(false), 3000);
               }
             } else {
               // スタート記事のコンテンツを取得
@@ -167,6 +175,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
 
   return (
     <div className="flex flex-col min-h-screen">
+      {showConfetti && <Confetti />}
       <Dialog open={showGoalDialog} onOpenChange={setShowGoalDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
