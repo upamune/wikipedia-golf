@@ -84,10 +84,20 @@ export async function getArticleContent(title: string): Promise<string> {
 
       const params = new URLSearchParams(currentUrl.search);
       const currentScore = Number.parseInt(params.get('score') || '0', 10);
+      const currentHistory = params.get('history');
       
       const newParams = new URLSearchParams();
       newParams.set('current', title);
       newParams.set('score', (currentScore + 1).toString());
+      
+      // 履歴を引き継ぎ、新しい記事を追加
+      if (currentHistory) {
+        const history = decodeURIComponent(currentHistory).split('~');
+        const newHistory = [...history, title];
+        newParams.set('history', encodeURIComponent(newHistory.join('~')));
+      } else {
+        newParams.set('history', encodeURIComponent(title));
+      }
 
       const newUrl = `/game/${start}/${goal}?${newParams.toString()}`;
       return `href="${newUrl}" class="wiki-link" style="color: #0645ad; text-decoration: none; cursor: pointer;"`;
