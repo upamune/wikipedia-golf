@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
 import { ArticleCard } from "./ArticleCard";
 import { ShareButton } from "./ShareButton";
 import { getRandomArticle, getArticleByTitle, type WikipediaArticle } from "@/lib/wikipedia";
+import { getRandomTopArticle } from "@/lib/top-articles";
 import { useLocation } from "wouter";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
@@ -14,13 +15,18 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
   const [startArticle, setStartArticle] = useState<WikipediaArticle | null>(null);
   const [goalArticle, setGoalArticle] = useState<WikipediaArticle | null>(null);
 
-  async function generateNewGame() {
+  const generateNewGame = useCallback(async () => {
     setLoading(true);
     try {
-      const [start, goal] = await Promise.all([
-        getRandomArticle(),
-        getRandomArticle()
-      ]);
+      const start = await getRandomArticle();
+      const goalFromTop = getRandomTopArticle();
+      
+      // 記事の詳細情報を取得
+      const goal = await getArticleByTitle(goalFromTop.title);
+      if (!goal) {
+        throw new Error("目標記事の取得に失敗しました");
+      }
+
       setStartArticle(start);
       setGoalArticle(goal);
       setLocation(`/game/${encodeURIComponent(start.title)}/${encodeURIComponent(goal.title)}`);
@@ -33,7 +39,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast, setLocation]);
 
   useEffect(() => {
     async function loadArticles() {
@@ -64,7 +70,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
       }
     }
     loadArticles();
-  }, [startTitle, goalTitle]);
+  }, [startTitle, goalTitle, toast, generateNewGame]);
 
   if (loading) {
     return (

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "NODE_ENV=production vite build",
-    "check": "tsc"
+    "check": "tsc",
+    "fetch-articles": "mkdir -p data && bun run scripts/fetch_articles.ts > data/top-articles.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
