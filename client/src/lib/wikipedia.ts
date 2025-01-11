@@ -1,3 +1,5 @@
+import { HISTORY_SEPARATOR } from "./utils";
+
 const API_ENDPOINT = "https://ja.wikipedia.org/w/api.php";
 
 export interface WikipediaArticle {
@@ -54,14 +56,36 @@ export async function getArticleContent(title: string): Promise<string> {
 
   const html = content.parse.text["*"];
 
+  // DOMパーサーを作成
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  // 外部リンクを無効化
+  const externalLinks = Array.from(doc.querySelectorAll('a.external.text'));
+  for (const link of externalLinks) {
+    const span = doc.createElement('span');
+    span.className = 'non-game-link';
+    span.style.cssText = 'color: #72767d; text-decoration: none; cursor: not-allowed;';
+    span.textContent = link.textContent;
+    link.replaceWith(span);
+  }
+
   // リソースのパスを修正
-  const processedHtml = html
+  const processedHtml = doc.body.innerHTML
     // 画像のsrcsetを修正
     .replace(/srcset="\/\//g, 'srcset="https://')
     // 画像のsrcを修正
     .replace(/src="\/\//g, 'src="https://')
     // 画像リンクを無効化
     .replace(/<a[^>]*class="image"[^>]*>(.*?)<\/a>/g, '$1')
+    // 生のURLテキストを無効化
+    .replace(/(?<!["'])(https?:\/\/[^\s<>"']+)/g, '<span class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;">$1</span>')
+    // Markdownスタイルのリンクを無効化（@で始まるリンク）
+    .replace(/@(https?:\/\/[^\s<]+)/g, '<span class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;">@$1</span>')
+    // 完全な外部リンクを無効化（http:// や https:// で始まるリンク）
+    .replace(/<a[^>]*href="https?:\/\/[^"]*"[^>]*>(.*?)<\/a>/g, '<span class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;">$1</span>')
+    // 外部リンクを無効化（/wiki/ 以外のパスを持つリンク）
+    .replace(/<a[^>]*href="\/(?!wiki\/)[^"]*"[^>]*>(.*?)<\/a>/g, '<span class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;">$1</span>')
     // Wikiリンクを処理
     .replace(/href="\/wiki\/([^"]+)"/g, (match: string, title: string) => {
       // 特殊なリンクは除外
@@ -74,20 +98,30 @@ export async function getArticleContent(title: string): Promise<string> {
         title.startsWith('Category:') ||
         title.includes('#')
       ) {
-        return 'style="display:none"';
+        return 'class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;"';
       }
 
       // 通常のリンクはゲームのURLに変換
       const currentUrl = new URL(window.location.href);
       const [, , start, goal] = currentUrl.pathname.split('/');
-      if (!start || !goal) return 'style="display:none"';
+      if (!start || !goal) return 'class="non-game-link" style="color: #72767d; text-decoration: none; cursor: not-allowed;"';
 
       const params = new URLSearchParams(currentUrl.search);
       const currentScore = Number.parseInt(params.get('score') || '0', 10);
+      const currentHistory = params.get('history');
       
       const newParams = new URLSearchParams();
       newParams.set('current', title);
       newParams.set('score', (currentScore + 1).toString());
+      
+      // 履歴を引き継ぎ、新しい記事を追加
+      if (currentHistory) {
+        const history = decodeURIComponent(currentHistory).split(HISTORY_SEPARATOR);
+        const newHistory = [...history, title];
+        newParams.set('history', encodeURIComponent(newHistory.join(HISTORY_SEPARATOR)));
+      } else {
+        newParams.set('history', encodeURIComponent(title));
+      }
 
       const newUrl = `/game/${start}/${goal}?${newParams.toString()}`;
       return `href="${newUrl}" class="wiki-link" style="color: #0645ad; text-decoration: none; cursor: pointer;"`;

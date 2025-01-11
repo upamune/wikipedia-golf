@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Trophy, Share2 } from "lucide-react";
+import { Loader2, RefreshCw, Trophy, Share2, Clock } from "lucide-react";
 import { ShareButton } from "./ShareButton";
 import { getRandomArticle, getArticleByTitle, getArticleContent, type WikipediaArticle } from "@/lib/wikipedia";
 import { getRandomTopArticle, getWikipediaUrl } from "@/lib/top-articles";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Confetti } from "./Confetti";
 import { ArticleSkeleton } from "./ArticleSkeleton";
+import { HISTORY_SEPARATOR } from "@/lib/utils";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
   const [location, setLocation] = useLocation();
@@ -30,6 +31,10 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
   const urlParams = new URLSearchParams(window.location.search);
   const currentTitle = urlParams.get('current') ? decodeURIComponent(urlParams.get('current') ?? '') : startTitle;
   const score = Number.parseInt(urlParams.get('score') || '0', 10);
+  const historyParam = urlParams.get('history');
+  const history: string[] = historyParam 
+    ? decodeURIComponent(historyParam).split(HISTORY_SEPARATOR)
+    : [];
 
   const [startArticle, setStartArticle] = useState<WikipediaArticle | null>(null);
   const [goalArticle, setGoalArticle] = useState<WikipediaArticle | null>(null);
@@ -69,10 +74,14 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
     try {
       const newArticle = await getArticleByTitle(title);
       if (newArticle) {
+        // 履歴を更新
+        const newHistory = [...history, newArticle.title];
+        
         // 新しい状態をURLに反映
         const newParams = new URLSearchParams();
         newParams.set('current', newArticle.title);
         newParams.set('score', (score + 1).toString());
+        newParams.set('history', encodeURIComponent(newHistory.join(HISTORY_SEPARATOR)));
         setLocation(`/game/${encodeURIComponent(startTitle || '')}/${encodeURIComponent(goalTitle || '')}?${newParams.toString()}`);
 
         // ゴール判定
@@ -91,16 +100,17 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
         variant: "destructive",
       });
     }
-  }, [startTitle, goalTitle, score, toast, setLocation]);
+  }, [startTitle, goalTitle, score, history, toast, setLocation]);
 
   const handleShareToX = useCallback(() => {
     // 基本的なゲームURLを生成（scoreとcurrentパラメータを除く）
     const baseUrl = new URL(window.location.href);
     baseUrl.search = ''; // クエリパラメータをクリア
-    const text = `⛳️ Wikipediaゴルフで${score}手でゴールしました！\n\n🎲 スタート: ${startArticle?.title}\n✨ ゴール: ${goalArticle?.title}\n\n#Wikipediaゴルフ\n${baseUrl.toString()}`;
+    const historyText = history.slice(0, -1).map(title => `→ ${decodeURIComponent(title)}`).join('\n');
+    const text = `⛳️ Wikipediaゴルフで${score}手でゴールしました！\n\n🎲 スタート: ${startArticle?.title}\n${historyText}\n✨ ゴール: ${goalArticle?.title}\n\n#Wikipediaゴルフ\n${baseUrl.toString()}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
-  }, [score, startArticle?.title, goalArticle?.title]);
+  }, [score, startArticle?.title, goalArticle?.title, history]);
 
   useEffect(() => {
     async function loadArticles() {
@@ -210,6 +220,18 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 mt-4">
+            <div className="border rounded-lg p-4 max-h-[40vh] overflow-y-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-4 w-4" />
+                <span className="font-medium">履歴</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1">
+                <li className="break-all">{startArticle?.title}</li>
+                {history.map((title) => (
+                  <li key={`history-${title}`} className="break-all">{decodeURIComponent(title)}</li>
+                ))}
+              </ol>
+            </div>
             <div className="flex justify-center gap-4">
               <Button onClick={handleNewGame} className="gap-2">
                 <RefreshCw className="h-4 w-4" />

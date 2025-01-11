@@ -8,10 +8,11 @@ export function ShareButton() {
   const isMobile = useMobile();
 
   const handleShare = async () => {
-    const url = window.location.href;
+    const baseUrl = new URL(window.location.href);
+    baseUrl.search = '';
 
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(baseUrl.toString());
       toast({
         title: "URLをコピーしました",
         description: "このゲームのURLがクリップボードにコピーされました。",
