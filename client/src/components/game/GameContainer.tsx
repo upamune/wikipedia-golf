@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Confetti } from "./Confetti";
 import { ArticleSkeleton } from "./ArticleSkeleton";
+import { HISTORY_SEPARATOR } from "@/lib/utils";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
   const [location, setLocation] = useLocation();
@@ -32,7 +33,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
   const score = Number.parseInt(urlParams.get('score') || '0', 10);
   const historyParam = urlParams.get('history');
   const history: string[] = historyParam 
-    ? decodeURIComponent(historyParam).split('~')
+    ? decodeURIComponent(historyParam).split(HISTORY_SEPARATOR)
     : [];
 
   const [startArticle, setStartArticle] = useState<WikipediaArticle | null>(null);
@@ -80,7 +81,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
         const newParams = new URLSearchParams();
         newParams.set('current', newArticle.title);
         newParams.set('score', (score + 1).toString());
-        newParams.set('history', encodeURIComponent(newHistory.join('~')));
+        newParams.set('history', encodeURIComponent(newHistory.join(HISTORY_SEPARATOR)));
         setLocation(`/game/${encodeURIComponent(startTitle || '')}/${encodeURIComponent(goalTitle || '')}?${newParams.toString()}`);
 
         // ゴール判定
