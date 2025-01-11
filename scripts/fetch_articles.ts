@@ -16,6 +16,13 @@ interface Article {
   rank: number;
 }
 
+// 除外するタイトルのリスト
+const EXCLUDED_TITLES = new Set([
+  "特別:検索",
+  "メインページ",
+  "特別:最近の更新"
+]);
+
 async function fetchTopArticles() {
   const date = new Date();
   date.setDate(date.getDate() - 1); // 昨日の日付を取得
@@ -38,7 +45,9 @@ async function fetchTopArticles() {
     }
     
     const data = await response.json() as PageViewResponse;
-    const articles = data.items[0].articles.slice(0, 300);
+    const articles = data.items[0].articles
+      .filter(article => !EXCLUDED_TITLES.has(article.article))
+      .slice(0, 300);
     
     const formattedArticles: Article[] = articles.map((article, index) => ({
       title: article.article,
