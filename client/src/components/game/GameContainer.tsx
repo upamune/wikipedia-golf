@@ -106,7 +106,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
     // 基本的なゲームURLを生成（scoreとcurrentパラメータを除く）
     const baseUrl = new URL(window.location.href);
     baseUrl.search = ''; // クエリパラメータをクリア
-    const historyText = history.map(title => `→ ${decodeURIComponent(title)}`).join('\n');
+    const historyText = history.slice(0, -1).map(title => `→ ${decodeURIComponent(title)}`).join('\n');
     const text = `⛳️ Wikipediaゴルフで${score}手でゴールしました！\n\n🎲 スタート: ${startArticle?.title}\n${historyText}\n✨ ゴール: ${goalArticle?.title}\n\n#Wikipediaゴルフ\n${baseUrl.toString()}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
