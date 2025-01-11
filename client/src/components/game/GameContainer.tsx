@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Confetti } from "./Confetti";
+import { ArticleSkeleton } from "./ArticleSkeleton";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
   const [location, setLocation] = useLocation();
@@ -23,6 +24,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
   const [articleContent, setArticleContent] = useState<string>("");
   const [showGoalDialog, setShowGoalDialog] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // URLからゲームの状態を取得
   const urlParams = new URLSearchParams(window.location.search);
@@ -163,12 +165,32 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
       }
     }
     loadArticles();
-  }, [startTitle, goalTitle, currentTitle, score, toast, generateNewGame]);
+  }, [startTitle, goalTitle, currentTitle, toast, generateNewGame]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex flex-col min-h-screen">
+        <header className="border-b bg-white">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 container mx-auto px-4 py-4">
+          <div className="h-[calc(100vh-8rem)] overflow-y-auto border rounded-lg bg-white p-8 max-w-4xl mx-auto">
+            <ArticleSkeleton />
+          </div>
+        </main>
       </div>
     );
   }
@@ -204,26 +226,26 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
         </DialogContent>
       </Dialog>
 
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+      <header className={`border-b sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-sm shadow-sm' : 'bg-white'}`}>
+        <div className={`container mx-auto px-4 ${isScrolled ? 'py-2' : 'py-4'}`}>
+          <div className={`flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 ${isScrolled ? 'h-8' : ''}`}>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
                 <Badge className="bg-blue-500">スタート</Badge>
                 <span className="font-medium truncate max-w-[200px]">{startArticle?.title}</span>
               </div>
               {currentArticle && currentArticle.title !== startArticle?.title && (
-                <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
                   <Badge className="bg-green-500">現在</Badge>
                   <span className="font-medium truncate max-w-[200px]">{currentArticle.title}</span>
                 </div>
               )}
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'absolute left-1/2 -translate-x-1/2' : ''}`}>
                 <Badge className="bg-red-500">ゴール</Badge>
                 <span className="font-medium truncate max-w-[200px]">{goalArticle?.title}</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className={`flex items-center gap-4 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
               <span className="font-bold text-lg whitespace-nowrap">スコア: {score} 手</span>
               <div className="flex items-center gap-2">
                 <Button
@@ -252,6 +274,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
       <main className="flex-1 container mx-auto px-4 py-4">
         <div 
           className="h-[calc(100vh-8rem)] overflow-y-auto border rounded-lg bg-white p-8 max-w-4xl mx-auto wikipedia-content"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Wikipediaの記事を表示するために必要
           dangerouslySetInnerHTML={{ __html: articleContent }}
         />
       </main>
