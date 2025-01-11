@@ -1,3 +1,5 @@
+import { HISTORY_SEPARATOR } from "./utils";
+
 const API_ENDPOINT = "https://ja.wikipedia.org/w/api.php";
 
 export interface WikipediaArticle {
@@ -92,9 +94,9 @@ export async function getArticleContent(title: string): Promise<string> {
       
       // 履歴を引き継ぎ、新しい記事を追加
       if (currentHistory) {
-        const history = decodeURIComponent(currentHistory).split('~');
+        const history = decodeURIComponent(currentHistory).split(HISTORY_SEPARATOR);
         const newHistory = [...history, title];
-        newParams.set('history', encodeURIComponent(newHistory.join('~')));
+        newParams.set('history', encodeURIComponent(newHistory.join(HISTORY_SEPARATOR)));
       } else {
         newParams.set('history', encodeURIComponent(title));
       }
