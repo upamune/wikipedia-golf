@@ -70,6 +70,10 @@ export async function getArticleContent(title: string): Promise<string> {
     link.replaceWith(span);
   }
 
+  // 座標情報を削除 (position: absoluteを指定しているので非表示に)
+  const coordinates = doc.querySelector('span#coordinates');
+  coordinates?.remove();
+
   // リソースのパスを修正
   const processedHtml = doc.body.innerHTML
     // 画像のsrcsetを修正
