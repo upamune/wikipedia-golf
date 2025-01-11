@@ -13,8 +13,8 @@ export default function Home({ params }: { params?: { start?: string; goal?: str
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Wikipedia ゴルフ
           </h1>
-          <div className="text-lg text-gray-600 max-w-2xl mx-auto break-words">
-            スタート記事からゴール記事まで、最小限のクリックでたどり着けるかチャレンジしよう！
+          <div className="text-base text-gray-600 max-w-2xl mx-auto break-words">
+            スタート記事からゴール記事まで、最小限のクリックでたどり着けるかチャレンジ！
           </div>
         </motion.div>
 

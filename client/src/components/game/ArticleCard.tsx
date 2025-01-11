@@ -1,14 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { WikipediaArticle } from "@/lib/wikipedia";
+import type { WikipediaArticle } from "@/lib/wikipedia";
 
 interface ArticleCardProps {
   article: WikipediaArticle;
   type: "start" | "goal";
+  hideUrl?: boolean;
 }
 
-export function ArticleCard({ article, type }: ArticleCardProps) {
+export function ArticleCard({ article, type, hideUrl }: ArticleCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -30,14 +31,16 @@ export function ArticleCard({ article, type }: ArticleCardProps) {
           <p className="text-sm text-gray-600 mb-4">
             {article.extract?.slice(0, 150)}...
           </p>
-          <a
-            href={article.url}
+          {!hideUrl && (
+            <a
+              href={article.url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 text-sm"
           >
             Wikipedia で開く →
-          </a>
+            </a>
+          )}
         </CardContent>
       </Card>
     </motion.div>
