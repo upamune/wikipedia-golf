@@ -3,7 +3,7 @@ name: Fetch Wikipedia Articles
 on:
   schedule:
     # 日本時間朝3時
-    - cron: '0 3 * * *'
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:
