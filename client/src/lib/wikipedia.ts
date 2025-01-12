@@ -138,6 +138,49 @@ export async function getArticleContent(title: string): Promise<string> {
     <style>
       ${styles}
       /* カスタムスタイル */
+      .wikipedia-content {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+      }
+
+      /* モバイル向けのスクロール領域の視覚的なヒント */
+      @media (max-width: 768px) {
+        .wikipedia-content::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 20px;
+          background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
+          pointer-events: none;
+        }
+      }
+
+      /* スクロールバーのスタイル */
+      .wikipedia-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .wikipedia-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .wikipedia-content::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+
+      .wikipedia-content::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
       .wikipedia-content .mw-parser-output {
         font-size: 16px;
         line-height: 1.6;

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function Home({ params }: { params?: { start?: string; goal?: string } }) {
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 pt-8 px-2">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

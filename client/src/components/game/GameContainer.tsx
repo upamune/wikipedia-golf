@@ -190,13 +190,13 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
     return (
       <div className="flex flex-col min-h-screen">
         <header className="border-b bg-white">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-2 py-2">
             <div className="flex justify-center">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
           </div>
         </header>
-        <main className="flex-1 container mx-auto px-4 py-4">
+        <main className="flex-1 container mx-auto px-2 py-2">
           <div className="h-[calc(100vh-8rem)] overflow-y-auto border rounded-lg bg-white p-8 max-w-4xl mx-auto">
             <ArticleSkeleton />
           </div>
@@ -293,7 +293,7 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-4">
+      <main className="flex-1 container mx-auto px-2 py-2">
         <div 
           className="h-[calc(100vh-8rem)] overflow-y-auto border rounded-lg bg-white p-8 max-w-4xl mx-auto wikipedia-content"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: Wikipediaの記事を表示するために必要
