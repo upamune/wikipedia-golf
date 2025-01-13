@@ -17,6 +17,12 @@ import {
 import { Confetti } from "./Confetti";
 import { ArticleSkeleton } from "./ArticleSkeleton";
 import { HISTORY_SEPARATOR } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; goalTitle?: string }) {
   const [location, setLocation] = useLocation();
@@ -254,17 +260,50 @@ export function GameContainer({ startTitle, goalTitle }: { startTitle?: string; 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
                 <Badge className="bg-blue-500">スタート</Badge>
-                <span className="font-medium truncate max-w-[200px]">{startArticle?.title}</span>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" className="text-left hover:opacity-80 active:opacity-60 transition-opacity">
+                        <span className="font-medium truncate max-w-[200px] sm:max-w-[150px] md:max-w-[200px]">{startArticle?.title}</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[280px] break-all">
+                      <p>{startArticle?.title}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               {currentArticle && currentArticle.title !== startArticle?.title && (
                 <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>
                   <Badge className="bg-green-500">現在</Badge>
-                  <span className="font-medium truncate max-w-[200px]">{currentArticle.title}</span>
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" className="text-left hover:opacity-80 active:opacity-60 transition-opacity">
+                          <span className="font-medium truncate max-w-[200px] sm:max-w-[150px] md:max-w-[200px]">{currentArticle.title}</span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-[280px] break-all">
+                        <p>{currentArticle.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               )}
               <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'absolute left-1/2 -translate-x-1/2' : ''}`}>
                 <Badge className="bg-red-500">ゴール</Badge>
-                <span className="font-medium truncate max-w-[200px]">{goalArticle?.title}</span>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" className="text-left hover:opacity-80 active:opacity-60 transition-opacity">
+                        <span className="font-medium truncate max-w-[200px] sm:max-w-[150px] md:max-w-[200px]">{goalArticle?.title}</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[280px] break-all">
+                      <p>{goalArticle?.title}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
             <div className={`flex items-center gap-4 transition-all duration-300 ${isScrolled ? 'hidden' : ''}`}>

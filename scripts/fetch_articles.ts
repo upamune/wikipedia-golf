@@ -36,7 +36,7 @@ async function fetchTopArticles() {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'WikipediaGolf/1.0 (https://github.com/upamune/wikipedia-golf; upamune@example.com)'
+        'User-Agent': 'WikipediaGolf/1.0'
       }
     });
     
