@@ -24,12 +24,19 @@ const EXCLUDED_TITLES = new Set([
 ]);
 
 async function fetchTopArticles() {
-  const date = new Date();
-  date.setDate(date.getDate() - 1); // 昨日の日付を取得
-  
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const now = new Date();
+  const utcYear = now.getUTCFullYear();
+  const utcMonth = now.getUTCMonth();
+  const utcDay = now.getUTCDate();
+  const utcHour = now.getUTCHours();
+
+  // 日本時間 (UTC+9) での日付を計算
+  let jstDate = new Date(Date.UTC(utcYear, utcMonth, utcDay, utcHour + 9));
+  jstDate.setDate(jstDate.getDate() - 1); // 昨日の日付
+
+  const year = jstDate.getFullYear();
+  const month = String(jstDate.getMonth() + 1).padStart(2, '0');
+  const day = String(jstDate.getDate()).padStart(2, '0');
   
   const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/ja.wikipedia/all-access/${year}/${month}/${day}`;
   
