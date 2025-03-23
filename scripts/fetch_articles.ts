@@ -32,7 +32,7 @@ async function fetchTopArticles() {
 
   // 日本時間 (UTC+9) での日付を計算
   let jstDate = new Date(Date.UTC(utcYear, utcMonth, utcDay, utcHour + 9));
-  jstDate.setDate(jstDate.getDate() - 1); // 昨日の日付
+  jstDate.setDate(jstDate.getDate() - 2); // 一昨日の日付
 
   const year = jstDate.getFullYear();
   const month = String(jstDate.getMonth() + 1).padStart(2, '0');
